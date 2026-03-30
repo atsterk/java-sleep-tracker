@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.function.Function;
 
 public class CountSleeplessNights implements Function<List<SleepingSession>, SleepAnalysisResult> {
+    private static final int MIDDAY_HOUR = 12;
+    private static final int NIGHT_END_HOUR = 6;
+
     @Override
     public SleepAnalysisResult apply(List<SleepingSession> sleepingSessions) {
 
@@ -14,7 +17,7 @@ public class CountSleeplessNights implements Function<List<SleepingSession>, Sle
 
         long amountOfNights;
 
-        if (sleepingSessions.getFirst().getSleepSessionStart().getHour() < 12) {
+        if (sleepingSessions.getFirst().getSleepSessionStart().getHour() < MIDDAY_HOUR) {
             amountOfNights = ChronoUnit.DAYS.between(start, end) + 1;
         } else {
             amountOfNights = ChronoUnit.DAYS.between(start, end);
@@ -23,7 +26,7 @@ public class CountSleeplessNights implements Function<List<SleepingSession>, Sle
         long sleepfulNights = sleepingSessions.stream()
                 .filter(session -> session.getSleepSessionStart().getDayOfMonth()
                         != session.getSleepSessionEnd().getDayOfMonth()
-                        || session.getSleepSessionStart().getHour() < 6)
+                        || session.getSleepSessionStart().getHour() < NIGHT_END_HOUR)
                 .map(session -> session.getSleepSessionEnd().toLocalDate())
                 .distinct()
                 .count();

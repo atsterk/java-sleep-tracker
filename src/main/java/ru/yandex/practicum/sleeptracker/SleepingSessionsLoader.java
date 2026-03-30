@@ -19,7 +19,7 @@ public class SleepingSessionsLoader {
         this.path = path;
     }
 
-    public List<SleepingSession> getSleepingSessions() throws IOException, DateTimeParseException {
+    public List<SleepingSession> getSleepingSessions() {
         List<SleepingSession> sleepingSessions = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
@@ -27,7 +27,16 @@ public class SleepingSessionsLoader {
             lines.map(line -> line.split(";"))
                     .forEach(array -> sleepingSessions.add(new SleepingSession(LocalDateTime.parse(array[0], formatter),
                             LocalDateTime.parse(array[1], formatter), SleepSessionQuality.valueOf(array[2]))));
+            if (sleepingSessions.isEmpty()) {
+                throw new RuntimeException("Не было найдено ни одной сессии");
+                //добавил проверку при загрузке, что файл не пустой,
+                // чтобы гарантировать отсутствием NPE или NoSuchElementException в функциональных классах
+            }
             return sleepingSessions;
+        } catch (IOException exp) {
+            throw new RuntimeException("Не удалось открыть файл", exp);
+        } catch (DateTimeParseException exp) {
+            throw new RuntimeException("Данные в файле в неправильном виде", exp);
         }
     }
 }

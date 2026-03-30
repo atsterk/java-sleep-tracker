@@ -1,9 +1,6 @@
 package ru.yandex.practicum.sleeptracker;
 
-import java.io.IOException;
-import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 public class SleepTrackerApp {
@@ -29,12 +26,8 @@ public class SleepTrackerApp {
                     .map(f -> f.apply(sleepingSessions))
                     .forEach(SleepAnalysisResult::printResult);
 
-        } catch (IOException exp) {
-            System.out.println("Не удалось открыть файл");
-        } catch (NoSuchElementException exp) {
-            System.out.println("Не было найдено ни одной сессии");
-        } catch (DateTimeParseException exp) {
-            System.out.println("Данные в файле в неправильном виде");
+        } catch (RuntimeException exp) {
+            System.out.println(exp.getMessage());
         }
     }
 }
